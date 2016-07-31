@@ -54,49 +54,77 @@
             // turns into Date object for easier Date math
             return new Date(year, month, day);
         }
+
+        // give two Date objects, returns the time difference between them as (years, months, days)
+        function timeDifference(first, second){
+            
+            // these variables track if we need to "borrow" in our subtraction
+            var earlierDate = false;
+            var earlierMonth = false;
+
+            // find the difference in dates
+            // adding the number of the days in the month if we go onto an earlier date
+            var dateDifference = second.getDate() - first.getDate();
+            if(dateDifference < 0){
+                earlierDate = true;
+                dateDifference += Date.getDaysInMonth(first.getYear(), first.getMonth()); 
+            }
+            
+            // find the difference in the month
+            // add 12 if the second month was earlier in the year
+            var monthDifference = second.getMonth() - first.getMonth();
+            if(monthDifference < 0){
+                earlierMonth = true;
+                monthDifference += 12;
+            }
+            
+            // find the difference in the years of the two dates
+            var years = second.getFullYear() - first.getFullYear();
+            
+            // subtracting out 1 from month or year if we "borrowed"
+            if(earlierDate)
+                monthDifference--;
+          
+            if(earlierMonth)
+                years--;
+            
+            // returning information as a 3-element array
+            return [years, monthDifference, dateDifference];
+        }
  
         // displays the result of the Date math
         function dispInput(){
-            
-            // current year, month, day
-            var currentTime = new Date();
 
             // doesn't display anything until there's an input
             if (document.getElementById("target time").value != ""){
-
-                var countUntil = getTargetTime();
-
-                // this will give us the difference in ms
-                var diff = countUntil - currentTime;
-                diff = new Date(diff);
-
-                // getting all different attributes of time gap
-                var seconds = diff.getSeconds();
-                var mins = diff.getMinutes();
-                var hours = diff.getHours();
-                var days = diff.getDate();
-                var months = diff.getMonth();
-
-                // UNIX time
-                var years = diff.getFullYear()-1970;
                 
+                // current year, month, day
+                var currentTime = new Date();
+                var countUntil = getTargetTime();
+                
+                // finds the difference between right now, and that time
+                var timeRemaining = timeDifference(currentTime, countUntil);
+
+                // unpacking time difference information
+                var years = timeRemaining[0];
+                var months = timeRemaining[1];
+                var days = timeRemaining[2];
+
                 // only display the time difference if the time entered is in the future
-                if(diff>=0){
-                    
-                    time.innerHTML = "Months " + months + " Days " + days.toString() + " Hours " + hours.toString() + " Minutes " + mins.toString() + " Seconds " + seconds.toString() ;
+                if((countUntil - currentTime)>=0){
+                    time.innerHTML = years + " years, " + months + " months, " + days + " days left."
                 }
 
                 // otherwise tells the user to give valid input
                 else{
                     time.innerHTML = "Please enter a date in the future"
                 }
-          }
+           }
 
-                    }
+        }
 
         // how often the program checks for user input
         window.setInterval(dispInput, 1000);
-
 
         </script>
 
