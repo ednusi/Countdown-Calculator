@@ -1,0 +1,105 @@
+<!-- 
+    A website that allows you to enter a date and time and allows you to view how far away that is. 
+    - Edward Alexander Nusinovich
+-->
+
+<!DOCTYPE HTML>
+<html>
+
+    <head>
+
+        <meta charset="UTF-8">
+        <title>Countdown Calculator!</title>
+        
+        <!-- Provides handy-dandy date math! Written by the lovely people at http://www.datejs.com/ -->
+        <script src="date.js"></script>
+    </head>
+
+    <body>
+
+        <!-- This is the field in which the time you enter will go -->
+        <div id="time"></div>
+
+        <!-- Displays the prompt and allows user to input their stuff-->
+        The date until you wish to count down: <br>
+        <input type="datetime" id="target time" name="target time"> 
+
+        <script>
+    
+
+        // this function looks at the values in the input and parses them into a date
+        function getTargetTime(){
+            
+            // get the input of the user
+            var inputTime = document.getElementById("target time").value;
+            
+            // tracks the spaces, to separate out the month, date, and year
+            var firstSpace = inputTime.indexOf(" ");
+            var secondSpace = inputTime.indexOf(" ", (firstSpace+1) );
+            
+            // converts a text-based month input to a number            
+            var month = Date.getMonthNumberFromName( inputTime.substring(0, firstSpace) );
+            var day = inputTime.substring(firstSpace, secondSpace);
+            var year = inputTime.substring(secondSpace);
+
+            // only get number part of day input
+            day = day.replace(/\D/g, "");
+
+            // gets rid of commas
+            var commaIndex = day.indexOf(",");
+            if(commaIndex != -1){
+                day = day.substring(0,commaIndex);
+            }
+            
+            // turns into Date object for easier Date math
+            return new Date(year, month, day);
+        }
+ 
+        // displays the result of the Date math
+        function dispInput(){
+            
+            // current year, month, day
+            var currentTime = new Date();
+
+            // doesn't display anything until there's an input
+            if (document.getElementById("target time").value != ""){
+
+                var countUntil = getTargetTime();
+
+                // this will give us the difference in ms
+                var diff = countUntil - currentTime;
+                diff = new Date(diff);
+
+                // getting all different attributes of time gap
+                var seconds = diff.getSeconds();
+                var mins = diff.getMinutes();
+                var hours = diff.getHours();
+                var days = diff.getDate();
+                var months = diff.getMonth();
+
+                // UNIX time
+                var years = diff.getFullYear()-1970;
+                
+                // only display the time difference if the time entered is in the future
+                if(diff>=0){
+                    
+                    time.innerHTML = "Months " + months + " Days " + days.toString() + " Hours " + hours.toString() + " Minutes " + mins.toString() + " Seconds " + seconds.toString() ;
+                }
+
+                // otherwise tells the user to give valid input
+                else{
+                    time.innerHTML = "Please enter a date in the future"
+                }
+          }
+
+                    }
+
+        // how often the program checks for user input
+        window.setInterval(dispInput, 1000);
+
+
+        </script>
+
+    </body>
+
+</html>
