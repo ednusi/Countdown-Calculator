@@ -111,7 +111,8 @@
                 var days = timeRemaining[2];
 
                 // only display the time difference if the time entered is in the future
-                if((countUntil - currentTime)>=0){
+                // 86,400,000 is the number of milliseconds in a day, so if this is within a day, we display the countdown
+                if((countUntil - currentTime) > -(86400000) ){
                     time.innerHTML = years + " years, " + months + " months, " + days + " days left."
                 }
 
